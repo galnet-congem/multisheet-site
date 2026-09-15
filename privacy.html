@@ -35,15 +35,16 @@
   <h2>What MultiSheet accesses</h2>
   <p>MultiSheet runs entirely inside your own Google account using Google Apps Script. To do its job, it requests:</p>
   <ul class="feature-list">
-    <li><strong>Google Sheets access</strong> — to read the list of sheet tabs in your active spreadsheet, and to hide, reorder, rename, duplicate, or delete tabs you select.</li>
-    <li><strong>Limited Google Drive access</strong> — only to create a temporary backup copy of a sheet so that "Undo" can work after a delete, and to generate a temporary file when you use "Download Selected." These temporary files are deleted automatically once they are no longer needed.</li>
-    <li><strong>A connection to Google's own Sheets export service</strong> — used only to generate the PDF, CSV, or XLSX file when you choose to download sheets. This connection goes to Google's own docs.google.com service, not to any third party.</li>
+    <li><strong>Google Sheets access</strong> — to read the list of sheet tabs in your active spreadsheet, and to hide, reorder, rename, or delete tabs you select. Most actions (Hide, Unhide, Move, Sort, Rename) only touch sheet-level details — names, order, and visibility — not the data inside your cells.</li>
+    <li><strong>Full sheet content, for specific actions only</strong> — "Duplicate," "Download Selected," and the temporary backup MultiSheet creates so that "Undo" can restore a deleted sheet all necessarily read and copy the complete content of the sheets involved. There is no way to duplicate, export, or safely undo a deletion without processing that data. This processing happens entirely within Google's own infrastructure (Google Sheets and Google Drive) as part of carrying out the action you requested.</li>
+    <li><strong>Limited Google Drive access</strong> — only to create the temporary backup copy used for "Undo" after a delete, and a temporary file when you use "Download Selected." These temporary files are deleted automatically once they are no longer needed.</li>
+    <li><strong>A connection to Google's own Sheets export service</strong> — used only to generate the PDF, CSV, or XLSX file when you choose to download sheets. This connection goes to Google's own docs.google.com service, not to any third party, and necessarily carries your sheet's real content in order to produce that file.</li>
   </ul>
 
   <h2>What MultiSheet does not do</h2>
   <ul class="feature-list">
-    <li>It does not read, analyze, or store the data inside your spreadsheet cells.</li>
-    <li>It does not send your spreadsheet content to MultiSheet Labs or to any third party.</li>
+    <li>It does not transmit your spreadsheet content to MultiSheet Labs, or to any third-party server. Every action — including the ones that process cell content, like Duplicate and Download Selected — runs entirely within Google's own infrastructure (Google Sheets and Google Drive), under your own Google account.</li>
+    <li>MultiSheet Labs does not operate any server that receives, stores, or has access to your spreadsheet data.</li>
     <li>It does not use cookies, analytics, or advertising trackers.</li>
     <li>It does not require you to create a separate account — access is authorized entirely through your existing Google account.</li>
   </ul>
