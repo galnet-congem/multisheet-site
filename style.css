@@ -194,6 +194,19 @@ footer {
   border: 1px solid var(--border);
 }
 
+.cta-note {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 10px 18px;
+  background: var(--panel);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
 .screenshot-frame {
   border: 1px solid var(--border);
   border-radius: 10px;
