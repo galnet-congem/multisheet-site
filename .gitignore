@@ -1,0 +1,22 @@
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+credentials*
+client_secret*
+service-account*
+
+# Dependencies (not used by this static site, kept as a guardrail)
+node_modules/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+
+# Local scratch / debug files
+*.local
+*.tmp
+*-mockup.html
+debug/
+scratch/
