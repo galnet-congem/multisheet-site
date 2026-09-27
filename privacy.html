@@ -16,7 +16,7 @@
 
 <main>
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: September 15, 2026</p>
+  <p class="updated">Last updated: September 27, 2026</p>
 
   <p>
     This Privacy Policy explains what MultiSheet ("the add-on") does and does not do
@@ -35,32 +35,200 @@
     Israel
   </p>
 
-  <h2>What MultiSheet accesses</h2>
-  <p>MultiSheet runs entirely inside your own Google account using Google Apps Script. To do its job, it requests:</p>
+  <h2>How MultiSheet uses Google user data</h2>
+  <p>
+    MultiSheet runs entirely inside your own Google account using Google Apps Script. It accesses
+    Google user data solely to carry out the specific action you select in the MultiSheet sidebar —
+    nothing is accessed in the background, and nothing is accessed for any purpose other than the
+    feature you click. The features are:
+  </p>
   <ul class="feature-list">
-    <li><strong>Google Sheets access</strong> — to read the list of sheet tabs in your active spreadsheet, and to hide, reorder, rename, or delete tabs you select. Most actions (Hide, Unhide, Move, Sort, Rename) only touch sheet-level details — names, order, and visibility — not the data inside your cells.</li>
-    <li><strong>Full sheet content, for specific actions only</strong> — "Duplicate," "Download Selected," and the temporary backup MultiSheet creates so that "Undo" can restore a deleted sheet all necessarily read and copy the complete content of the sheets involved. There is no way to duplicate, export, or safely undo a deletion without processing that data. This processing happens entirely within Google's own infrastructure (Google Sheets and Google Drive) as part of carrying out the action you requested.</li>
-    <li><strong>Limited Google Drive access</strong> — only to create the temporary backup copy used for "Undo" after a delete, and a temporary file when you use "Download Selected." These temporary files are deleted automatically once they are no longer needed.</li>
-    <li><strong>A connection to Google's own Sheets export service</strong> — used only to generate the PDF, CSV, or XLSX file when you choose to download sheets. This connection goes to Google's own docs.google.com service, not to any third party, and necessarily carries your sheet's real content in order to produce that file.</li>
+    <li>Listing your sheet tabs and their visibility, so you can select which ones to act on</li>
+    <li>Hide, Unhide, Hide Others, Show All</li>
+    <li>Reorder: Move to Start, Move to End, Move Left, Move Right, Sort A-Z, Sort Z-A</li>
+    <li>Rename: Add Prefix, Add Suffix, Sequential Rename</li>
+    <li>Duplicate</li>
+    <li>Delete, with Undo</li>
+    <li>Download / export selected sheets as CSV, TSV, PDF, XLSX, ODS, or HTML</li>
   </ul>
+  <p>
+    <strong>Some of these only need sheet-level details — not what's inside your cells.</strong>
+    Listing tabs, Hide, Unhide, Hide Others, Show All, the reorder actions, and the rename actions
+    only read and write sheet names, tab order, and visibility state. They never read the values,
+    formulas, or formatting inside your cells.
+  </p>
+  <p>
+    <strong>Some features do need the actual content of your sheets, and MultiSheet reads it in
+    order to perform them.</strong> This is not avoidable — there is no way to duplicate a sheet,
+    export it to a file, or restore it after a deletion without processing its content. Specifically:
+  </p>
+  <ul class="feature-list">
+    <li><strong>Duplicate</strong> copies the full content, formulas, and formatting of the selected
+      sheet(s) to a new tab in the same spreadsheet.</li>
+    <li><strong>Delete</strong> copies the full content and formulas of the sheet(s) you're deleting
+      into a backup spreadsheet in your own Google Drive first, so that Undo can restore them. See
+      "Temporary files in your Google Drive" below for exactly how that backup is handled.</li>
+    <li><strong>Download Selected</strong> reads your sheet data to build the file you requested.
+      For CSV and TSV, MultiSheet reads the calculated values of your cells (not the underlying
+      formulas) and builds the file entirely in memory — no file is created in your Drive for these
+      two formats. For PDF, XLSX, ODS, and HTML, MultiSheet copies the full content, formulas, and
+      formatting of the selected sheet(s) into a temporary spreadsheet in your own Google Drive, and
+      then asks Google's own Sheets export service to convert that temporary spreadsheet into the
+      file format you chose. See "Temporary files in your Google Drive" below.</li>
+  </ul>
+
+  <h2>Where processing happens</h2>
+  <p>
+    Every MultiSheet action runs inside Google's own infrastructure: the Google Apps Script
+    execution environment, the Google Sheets and Google Drive services, and — for PDF, XLSX, ODS,
+    and HTML downloads — Google's own Sheets export service at <code>docs.google.com</code>. The
+    finished result is sent back to your own browser, where MultiSheet triggers the file download
+    directly to your computer. MultiSheet Labs operates no server in this path, and your data does
+    not pass through one.
+  </p>
+
+  <h2>Temporary files in your Google Drive</h2>
+  <p>
+    A small number of MultiSheet's features create a temporary Google Sheets file in your own
+    Google Drive — never on any server operated by MultiSheet Labs. This happens in two cases:
+  </p>
+  <ul class="feature-list">
+    <li><strong>Delete, for Undo.</strong> When you delete one or more sheets, MultiSheet first
+      copies them into a new backup spreadsheet in your Drive, so that Undo can restore them
+      afterward. MultiSheet attempts to delete (trash) this backup file automatically in either of
+      two situations: when you use Undo to restore it, or when it "ages out" of MultiSheet's
+      15-entry undo history because you've since performed 15 more undoable actions. <strong>There
+      is currently no time-based expiration</strong> — if neither of those two things happens (for
+      example, if you delete a sheet and never use Undo, and never perform 15 more undoable
+      actions), the backup file can remain in your Drive indefinitely. You can find and delete it
+      yourself at any time; it will be a Google Sheets file with a name starting with "MultiSheet
+      Undo Backup."</li>
+    <li><strong>PDF (combined), XLSX, ODS, and HTML downloads.</strong> To produce these file
+      formats, MultiSheet creates a temporary spreadsheet in your Drive, copies the selected
+      sheet(s) into it, asks Google's export service to convert it, and then attempts to delete
+      (trash) that temporary spreadsheet immediately afterward, as part of the same request.</li>
+  </ul>
+  <p>
+    In both cases, the deletion (trashing) attempt is <strong>best-effort</strong>: MultiSheet asks
+    Google Drive to trash the file, but if that request does not succeed (for example, due to a
+    transient error), MultiSheet does not currently retry it, and the file can be left behind in
+    your Drive. This is a real, current limitation, not a hypothetical one, and we're disclosing it
+    plainly rather than promising a guarantee the current implementation doesn't provide. Any file
+    left behind is an ordinary file in your own Google Drive, fully visible and deletable by you at
+    any time, the same as any file you created yourself.
+  </p>
+  <p>
+    CSV and TSV downloads do not create any file in your Drive — they are built entirely in memory
+    and sent directly to your browser.
+  </p>
+
+  <h2>Undo history</h2>
+  <p>
+    To make Undo work, MultiSheet keeps a short history of your last actions using Google Apps
+    Script's own document properties storage — a small, per-spreadsheet key/value store built into
+    Apps Script itself, not a MultiSheet Labs database. This history holds at most 15 entries; for
+    most action types it stores only sheet names, order, and visibility state, and for Delete it
+    stores a reference to the backup file described above. It stays attached to your spreadsheet
+    file and is never transmitted anywhere else.
+  </p>
+
+  <h2>How MultiSheet protects your data</h2>
+  <p>The following protections are actually in place today:</p>
+  <ul class="feature-list">
+    <li><strong>Google's own OAuth authorization.</strong> MultiSheet never asks for or sees your
+      Google password; access is granted and can be revoked entirely through your Google Account's
+      own permission system.</li>
+    <li><strong>No MultiSheet Labs server in the data path.</strong> MultiSheet Labs does not
+      operate any backend server or database that receives, stores, or has access to your
+      spreadsheet content. All processing described above happens inside Google's own Apps Script
+      environment and Google's own Sheets/Drive services.</li>
+    <li><strong>Restricted outbound access.</strong> MultiSheet's code is only permitted to make
+      outbound network requests to Google's own <code>docs.google.com</code> export service — this
+      restriction is enforced by Google Apps Script's own configuration for this add-on, not merely
+      a policy statement.</li>
+    <li><strong>No externally stored authorization token.</strong> MultiSheet does not export,
+      transmit, or persist your Google authorization token outside of Google's own systems; it is
+      used only within the Apps Script execution that's actively serving your request.</li>
+    <li><strong>Scoped permissions, listed in full.</strong> MultiSheet requests exactly four
+      Google permissions, and each maps to a specific function:
+      <ul class="feature-list">
+        <li><code>.../auth/spreadsheets</code> — read and modify the sheet tabs in the spreadsheet
+          you are working in, and read and write the temporary spreadsheets MultiSheet itself
+          creates in your Drive for Delete/Undo backups and for PDF, XLSX, ODS, and HTML
+          exports.</li>
+        <li><code>.../auth/drive.file</code> — create and trash only the files MultiSheet itself
+          creates. It does not grant access to any other file in your Google Drive.</li>
+        <li><code>.../auth/script.container.ui</code> — display the MultiSheet sidebar inside your
+          spreadsheet.</li>
+        <li><code>.../auth/script.external_request</code> — fetch the converted export file from
+          Google's own <code>docs.google.com</code> export service, which is the only host
+          MultiSheet is permitted to contact.</li>
+      </ul>
+    </li>
+    <li><strong>Google's own infrastructure security.</strong> Any temporary file MultiSheet creates
+      in your Drive is protected by Google Drive's own access controls and transport security
+      (HTTPS) — the same protections that apply to any file you create yourself.</li>
+  </ul>
+  <p>
+    MultiSheet Labs does not implement its own encryption layer, does not hold any third-party
+    security certification, and does not operate infrastructure beyond what's described above. We
+    won't claim protections we haven't built.
+  </p>
+
+  <h2>Data retention and deletion</h2>
+  <p>Here is exactly how long each type of data is kept, and how it's removed:</p>
+  <ul class="feature-list">
+    <li><strong>Sheet content processed during an action</strong> (Duplicate, Download, Delete) —
+      not retained anywhere by MultiSheet Labs once the action completes; nothing is stored outside
+      Google's own systems.</li>
+    <li><strong>Undo history</strong> — kept in Apps Script document properties (see "Undo history"
+      above) until it's consumed by Undo or evicted after 15 more actions. Not time-limited.</li>
+    <li><strong>Delete/Undo backup spreadsheets in your Drive</strong> — MultiSheet attempts to
+      delete these when consumed by Undo or evicted from the 15-entry history, on a best-effort
+      basis, with no current time-based expiration (see "Temporary files in your Google Drive"
+      above).</li>
+    <li><strong>Export temporary spreadsheets in your Drive</strong> (PDF-combined, XLSX, ODS, HTML)
+      — MultiSheet attempts to delete these immediately after each export, on a best-effort basis.</li>
+    <li><strong>MultiSheet Labs' own external database of your spreadsheet content</strong> — none
+      exists. MultiSheet Labs does not currently operate any application database that stores your
+      spreadsheet contents, formulas, or exported files.</li>
+  </ul>
+  <p>
+    To delete data yourself: any backup or temporary file MultiSheet has left in your Drive is a
+    normal file you own — find it and delete it like any other file. To remove MultiSheet's access
+    entirely, revoke it from your Google Account (see "Your controls" below); MultiSheet Labs holds
+    nothing further to delete on its end, because it stores nothing outside Google's own systems.
+  </p>
 
   <h2>What MultiSheet does not do</h2>
   <ul class="feature-list">
-    <li>It does not transmit your spreadsheet content to MultiSheet Labs, or to any third-party server. Every action — including the ones that process cell content, like Duplicate and Download Selected — runs entirely within Google's own infrastructure (Google Sheets and Google Drive), under your own Google account.</li>
-    <li>MultiSheet Labs does not operate any server that receives, stores, or has access to your spreadsheet data.</li>
+    <li>It does not transmit your spreadsheet content to MultiSheet Labs, or to any third-party
+      server. Every action — including the ones that process cell content, like Duplicate,
+      Delete/Undo, and Download Selected — runs entirely within Google's own infrastructure, under
+      your own Google account.</li>
+    <li>MultiSheet Labs does not operate any server that receives, stores, or has access to your
+      spreadsheet data.</li>
+    <li>It does not sell, rent, transfer, or share any data accessed by this add-on with third
+      parties.</li>
+    <li>It does not use Google user data for advertising, including retargeting or
+      interest-based/personalized advertising.</li>
+    <li>It does not use Google user data to train, create, or improve any machine learning or
+      artificial intelligence model.</li>
     <li>It does not use cookies, analytics, or advertising trackers.</li>
-    <li>It does not require you to create a separate account — access is authorized entirely through your existing Google account.</li>
+    <li>It does not require you to create a separate account — access is authorized entirely
+      through your existing Google account.</li>
   </ul>
 
-  <h2>Where data is stored</h2>
-  <p>
-    MultiSheet keeps a small amount of temporary state (so that "Undo" and "Refresh" work correctly)
-    using Google's own Apps Script storage, scoped to the specific spreadsheet you're working in.
-    This state never leaves Google's infrastructure and is not accessible to MultiSheet Labs.
-  </p>
-
-  <h2>Data sharing</h2>
-  <p>MultiSheet Labs does not sell, rent, or share any data accessed by this add-on with third parties.</p>
+  <h2>Your controls</h2>
+  <ul class="feature-list">
+    <li>Any file MultiSheet creates lives in your own Google Drive, under your own control — you
+      can view, rename, move, or delete it at any time, the same as any other file you own.</li>
+    <li>You can revoke MultiSheet's access to your Google Account at any time from your
+      <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Google
+      Account's connected apps settings</a>.</li>
+    <li>For any question about this policy or how MultiSheet handles your data, contact
+      <a href="mailto:galnetzer7@gmail.com">galnetzer7@gmail.com</a>.</li>
+  </ul>
 
   <h2>Changes to this policy</h2>
   <p>If this policy changes, the updated version will be posted on this page with a new "Last updated" date.</p>
